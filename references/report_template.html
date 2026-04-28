@@ -1,0 +1,331 @@
+# 舆情报告 HTML 模板参考
+
+以下是生成 HTML 舆情报告时的样式和结构参考。
+
+## 整体框架
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{对象名}{天数}天舆情监测报告</title>
+    <style>
+        /* 全局样式 */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f5f7fa;
+            color: #1a1a2e;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        /* 报告容器 */
+        .report {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        /* 报告头部 */
+        .report-header {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #fff;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        .report-header h1 { font-size: 28px; margin-bottom: 12px; }
+        .report-header .meta { font-size: 14px; opacity: 0.8; }
+        .report-header .meta span { margin: 0 12px; }
+
+        /* KPI 卡片 */
+        .kpi-section { padding: 30px; }
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .kpi-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border-left: 4px solid #0f3460;
+        }
+        .kpi-card .value { font-size: 32px; font-weight: 700; color: #0f3460; }
+        .kpi-card .label { font-size: 13px; color: #666; margin-top: 6px; }
+        .kpi-card.positive { border-left-color: #27ae60; }
+        .kpi-card.positive .value { color: #27ae60; }
+        .kpi-card.negative { border-left-color: #e74c3c; }
+        .kpi-card.negative .value { color: #e74c3c; }
+        .kpi-card.neutral { border-left-color: #f39c12; }
+        .kpi-card.neutral .value { color: #f39c12; }
+
+        /* 章节标题 */
+        .section { padding: 0 30px 30px; }
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title .icon { font-size: 22px; }
+
+        /* 情感分布条 */
+        .sentiment-bar {
+            display: flex;
+            height: 36px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        .sentiment-bar .positive { background: #27ae60; }
+        .sentiment-bar .neutral { background: #f39c12; }
+        .sentiment-bar .negative { background: #e74c3c; }
+        .sentiment-legend {
+            display: flex;
+            gap: 24px;
+            font-size: 14px;
+            color: #555;
+        }
+        .sentiment-legend span { display: flex; align-items: center; gap: 6px; }
+        .sentiment-legend .dot {
+            width: 12px; height: 12px; border-radius: 50%; display: inline-block;
+        }
+
+        /* 时间线 */
+        .timeline { position: relative; padding-left: 30px; }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e0e0e0;
+        }
+        .timeline-item { position: relative; margin-bottom: 24px; }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #0f3460;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 2px #0f3460;
+        }
+        .timeline-item.positive::before { background: #27ae60; box-shadow: 0 0 0 2px #27ae60; }
+        .timeline-item.negative::before { background: #e74c3c; box-shadow: 0 0 0 2px #e74c3c; }
+        .timeline-item .date { font-size: 13px; color: #999; margin-bottom: 4px; }
+        .timeline-item .title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+        .timeline-item .desc { font-size: 14px; color: #555; }
+        .timeline-item .tag {
+            display: inline-block;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-top: 6px;
+            color: #fff;
+        }
+        .tag.positive { background: #27ae60; }
+        .tag.neutral { background: #f39c12; }
+        .tag.negative { background: #e74c3c; }
+        .tag.impact-high { background: #8e44ad; }
+        .tag.impact-mid { background: #2980b9; }
+        .tag.impact-low { background: #95a5a6; }
+
+        /* 风险矩阵 */
+        .risk-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .risk-table th {
+            background: #1a1a2e;
+            color: #fff;
+            padding: 12px 16px;
+            text-align: left;
+        }
+        .risk-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #eee;
+        }
+        .risk-table tr:hover { background: #f8f9fa; }
+        .risk-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .risk-badge.high { background: #e74c3c; }
+        .risk-badge.mid { background: #f39c12; }
+        .risk-badge.low { background: #27ae60; }
+
+        /* 建议区块 */
+        .advice-block { margin-bottom: 20px; }
+        .advice-block h4 {
+            font-size: 16px;
+            color: #0f3460;
+            margin-bottom: 10px;
+            padding-left: 12px;
+            border-left: 3px solid #0f3460;
+        }
+        .advice-block ul {
+            list-style: none;
+            padding: 0;
+        }
+        .advice-block ul li {
+            padding: 8px 0 8px 20px;
+            position: relative;
+            font-size: 14px;
+            color: #444;
+        }
+        .advice-block ul li::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: #0f3460;
+            font-weight: 700;
+        }
+
+        /* 免责声明 */
+        .disclaimer {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            font-size: 12px;
+            color: #999;
+            border-top: 1px solid #eee;
+        }
+
+        /* 响应式 */
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .report-header { padding: 24px 20px; }
+            .report-header h1 { font-size: 22px; }
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+            .section, .kpi-section { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="report">
+        <div class="report-header">
+            <h1>{对象名} {天数}天舆情监测报告</h1>
+            <div class="meta">
+                <span>监测周期：{起始日期} - {结束日期}</span>
+                <span>生成日期：{生成日期}</span>
+            </div>
+        </div>
+
+        <!-- KPI 概览 -->
+        <div class="kpi-section">
+            <div class="kpi-grid">
+                <div class="kpi-card positive">
+                    <div class="value">{正面占比}%</div>
+                    <div class="label">正面舆情</div>
+                </div>
+                <div class="kpi-card neutral">
+                    <div class="value">{中性占比}%</div>
+                    <div class="label">中性舆情</div>
+                </div>
+                <div class="kpi-card negative">
+                    <div class="value">{负面占比}%</div>
+                    <div class="label">负面舆情</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="value">{热搜次数}</div>
+                    <div class="label">热搜/热点事件</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 情感分布 -->
+        <div class="section">
+            <div class="section-title"><span class="icon">&#128202;</span> 舆情情感分布</div>
+            <div class="sentiment-bar">
+                <div class="positive" style="width: {正面占比}%"></div>
+                <div class="neutral" style="width: {中性占比}%"></div>
+                <div class="negative" style="width: {负面占比}%"></div>
+            </div>
+            <div class="sentiment-legend">
+                <span><span class="dot" style="background:#27ae60"></span> 正面 {正面占比}%</span>
+                <span><span class="dot" style="background:#f39c12"></span> 中性 {中性占比}%</span>
+                <span><span class="dot" style="background:#e74c3c"></span> 负面 {负面占比}%</span>
+            </div>
+            <p style="margin-top:16px; color:#555; font-size:14px;">{情感趋势描述}</p>
+        </div>
+
+        <!-- 重大事件时间线 -->
+        <div class="section">
+            <div class="section-title"><span class="icon">&#128197;</span> 重大舆情事件</div>
+            <div class="timeline">
+                <!-- 重复以下结构 -->
+                <div class="timeline-item {倾向class}">
+                    <div class="date">{事件日期}</div>
+                    <div class="title">{事件标题}</div>
+                    <div class="desc">{事件描述}</div>
+                    <span class="tag {倾向class}">{正面/中性/负面}</span>
+                    <span class="tag impact-{影响等级}">{影响等级}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 平台表现 -->
+        <div class="section">
+            <div class="section-title"><span class="icon">&#128240;</span> 平台表现</div>
+            <!-- 平台对比表格或描述 -->
+        </div>
+
+        <!-- 风险评估 -->
+        <div class="section">
+            <div class="section-title"><span class="icon">&#9888;</span> 风险评估</div>
+            <table class="risk-table">
+                <thead><tr><th>风险点</th><th>等级</th><th>建议应对</th></tr></thead>
+                <tbody>
+                    <tr><td>{风险描述}</td><td><span class="risk-badge {等级}">{等级}</span></td><td>{应对建议}</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 运营建议 -->
+        <div class="section">
+            <div class="section-title"><span class="icon">&#128161;</span> 运营建议</div>
+            <div class="advice-block">
+                <h4>短期建议（1-2周）</h4>
+                <ul><li>{建议1}</li><li>{建议2}</li></ul>
+            </div>
+            <div class="advice-block">
+                <h4>中期建议（1个月）</h4>
+                <ul><li>{建议1}</li><li>{建议2}</li></ul>
+            </div>
+            <div class="advice-block">
+                <h4>长期建议（3个月+）</h4>
+                <ul><li>{建议1}</li><li>{建议2}</li></ul>
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            <p>本报告数据来源于公开网络信息，仅供参考。</p>
+            <p>报告由 AI 自动生成，不代表任何官方立场。</p>
+        </div>
+    </div>
+</body>
+</html>
+```
+
+## 填充规则
+
+生成报告时，将模板中的 `{占位符}` 替换为实际采集和分析的数据。
+确保所有占位符都被替换，不要在最终报告中保留任何 `{}` 标记。
