@@ -1,16 +1,9 @@
-# 舆情报告 HTML 模板参考
-
-以下是生成 HTML 舆情报告时的样式和结构参考。
-
-## 整体框架
-
-```html
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{对象名}{天数}天舆情监测报告</title>
+    <title>{TITLE}</title>
     <style>
         /* 全局样式 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -222,10 +215,10 @@
 <body>
     <div class="report">
         <div class="report-header">
-            <h1>{对象名} {天数}天舆情监测报告</h1>
+            <h1>{TITLE}</h1>
             <div class="meta">
-                <span>监测周期：{起始日期} - {结束日期}</span>
-                <span>生成日期：{生成日期}</span>
+                <span>{PERIOD}</span>
+                <span>{DATE}</span>
             </div>
         </div>
 
@@ -233,19 +226,19 @@
         <div class="kpi-section">
             <div class="kpi-grid">
                 <div class="kpi-card positive">
-                    <div class="value">{正面占比}%</div>
+                    <div class="value">{POSITIVE}%</div>
                     <div class="label">正面舆情</div>
                 </div>
                 <div class="kpi-card neutral">
-                    <div class="value">{中性占比}%</div>
+                    <div class="value">{NEUTRAL}%</div>
                     <div class="label">中性舆情</div>
                 </div>
                 <div class="kpi-card negative">
-                    <div class="value">{负面占比}%</div>
+                    <div class="value">{NEGATIVE}%</div>
                     <div class="label">负面舆情</div>
                 </div>
                 <div class="kpi-card">
-                    <div class="value">{热搜次数}</div>
+                    <div class="value">{HOT_COUNT}</div>
                     <div class="label">热搜/热点事件</div>
                 </div>
             </div>
@@ -255,29 +248,29 @@
         <div class="section">
             <div class="section-title"><span class="icon">&#128202;</span> 舆情情感分布</div>
             <div class="sentiment-bar">
-                <div class="positive" style="width: {正面占比}%"></div>
-                <div class="neutral" style="width: {中性占比}%"></div>
-                <div class="negative" style="width: {负面占比}%"></div>
+                <div class="positive" style="width: {POSITIVE_NUM}%"></div>
+                <div class="neutral" style="width: {NEUTRAL_NUM}%"></div>
+                <div class="negative" style="width: {NEGATIVE_NUM}%"></div>
             </div>
             <div class="sentiment-legend">
-                <span><span class="dot" style="background:#27ae60"></span> 正面 {正面占比}%</span>
-                <span><span class="dot" style="background:#f39c12"></span> 中性 {中性占比}%</span>
-                <span><span class="dot" style="background:#e74c3c"></span> 负面 {负面占比}%</span>
+                <span><span class="dot" style="background:#27ae60"></span> 正面 {POSITIVE}%</span>
+                <span><span class="dot" style="background:#f39c12"></span> 中性 {NEUTRAL}%</span>
+                <span><span class="dot" style="background:#e74c3c"></span> 负面 {NEGATIVE}%</span>
             </div>
-            <p style="margin-top:16px; color:#555; font-size:14px;">{情感趋势描述}</p>
+            <p style="margin-top:16px; color:#555; font-size:14px;">{TREND_SUMMARY}</p>
         </div>
 
         <!-- 重大事件时间线 -->
         <div class="section">
             <div class="section-title"><span class="icon">&#128197;</span> 重大舆情事件</div>
             <div class="timeline">
-                <!-- 重复以下结构 -->
-                <div class="timeline-item {倾向class}">
-                    <div class="date">{事件日期}</div>
-                    <div class="title">{事件标题}</div>
-                    <div class="desc">{事件描述}</div>
-                    <span class="tag {倾向class}">{正面/中性/负面}</span>
-                    <span class="tag impact-{影响等级}">{影响等级}</span>
+                <!-- 重复以下结构以添加更多事件 -->
+                <div class="timeline-item {EVENT_CLASS}">
+                    <div class="date">{EVENT_DATE}</div>
+                    <div class="title">{EVENT_TITLE}</div>
+                    <div class="desc">{EVENT_DESC}</div>
+                    <span class="tag {EVENT_CLASS}">{EVENT_SENTIMENT}</span>
+                    <span class="tag impact-{EVENT_IMPACT}">{EVENT_IMPACT_LABEL}</span>
                 </div>
             </div>
         </div>
@@ -285,7 +278,7 @@
         <!-- 平台表现 -->
         <div class="section">
             <div class="section-title"><span class="icon">&#128240;</span> 平台表现</div>
-            <!-- 平台对比表格或描述 -->
+            <!-- 在此填充各平台分析内容 -->
         </div>
 
         <!-- 风险评估 -->
@@ -294,7 +287,8 @@
             <table class="risk-table">
                 <thead><tr><th>风险点</th><th>等级</th><th>建议应对</th></tr></thead>
                 <tbody>
-                    <tr><td>{风险描述}</td><td><span class="risk-badge {等级}">{等级}</span></td><td>{应对建议}</td></tr>
+                    <!-- 重复以下行以添加更多风险项 -->
+                    <tr><td>{RISK_DESC}</td><td><span class="risk-badge {RISK_LEVEL}">{RISK_LEVEL_LABEL}</span></td><td>{RISK_SUGGESTION}</td></tr>
                 </tbody>
             </table>
         </div>
@@ -304,15 +298,15 @@
             <div class="section-title"><span class="icon">&#128161;</span> 运营建议</div>
             <div class="advice-block">
                 <h4>短期建议（1-2周）</h4>
-                <ul><li>{建议1}</li><li>{建议2}</li></ul>
+                <ul><li>{ADVICE_SHORT_1}</li><li>{ADVICE_SHORT_2}</li></ul>
             </div>
             <div class="advice-block">
                 <h4>中期建议（1个月）</h4>
-                <ul><li>{建议1}</li><li>{建议2}</li></ul>
+                <ul><li>{ADVICE_MID_1}</li><li>{ADVICE_MID_2}</li></ul>
             </div>
             <div class="advice-block">
                 <h4>长期建议（3个月+）</h4>
-                <ul><li>{建议1}</li><li>{建议2}</li></ul>
+                <ul><li>{ADVICE_LONG_1}</li><li>{ADVICE_LONG_2}</li></ul>
             </div>
         </div>
 
@@ -323,9 +317,3 @@
     </div>
 </body>
 </html>
-```
-
-## 填充规则
-
-生成报告时，将模板中的 `{占位符}` 替换为实际采集和分析的数据。
-确保所有占位符都被替换，不要在最终报告中保留任何 `{}` 标记。
